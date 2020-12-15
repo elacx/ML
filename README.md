@@ -8,9 +8,6 @@ Models are too large to be pushed to Github, so they must be shared via another 
 - ```pip install -r requirments.txt```
 The enviroment was not included on the Github because of its size. 
 
-## ./lime_tests
-Contains notebooks of various LIME testing. Can we use LIME to detect adversarial examples? What about using it to measure model similarity?
-
 ## ./advgan_notebooks
 - **advgan_.ipynb:** Basic advGAN implementation in PyTorch
 - **advgan_rftarget.ipynb:** advGAN implementation where target model is a random forest classifier
@@ -25,3 +22,6 @@ Contains notebooks of various LIME testing. Can we use LIME to detect adversaria
 
 ### Naming scheme for target models: 
 ```./target_models/[type of model]_[number of classes]classes.[extension]```
+
+## ./lime_tests
+Contains notebooks of various LIME testing. Can we use LIME to detect adversarial examples? What about using it to measure model similarity?
