@@ -2,6 +2,12 @@
 Repository for advGAN and other ExML experiments.
 Models are too large to be pushed to Github, so they must be shared via another method. 
 
+**requirments.txt:** Has all required Python libraries. Note if the large libraries (such as PyTorch) do not install, use ```pip --no-cache-dir install LIBRARY```. To set up a virtual enviroment:
+- ```python3 -m venv NAME```
+- ```source NAME/bin/activate```
+- ```pip install -r requirments.txt```
+The enviroment was not included on the Github because of its size. 
+
 ## ./lime_tests
 Contains notebooks of various LIME testing. Can we use LIME to detect adversarial examples? What about using it to measure model similarity?
 
