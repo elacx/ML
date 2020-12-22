@@ -12,7 +12,7 @@ from sklearn.metrics import accuracy_score
 
 # generator / discriminator set up
 class Generator(nn.Module):
-    def __init__(self, image_nc=1,ngf = 64):
+    def __init__(self, image_nc=1,ngf = 28):
         super(Generator, self).__init__()
         self.conv1 = nn.Conv2d(1, 6, 5, 1, 0)
         self.pool = nn.MaxPool2d(2, 2) 

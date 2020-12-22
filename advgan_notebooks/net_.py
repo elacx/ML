@@ -42,7 +42,7 @@ class target_net(nn.Module):
 		'''
 		return self.net(img)
 
-	def train(self, data, criterion_tar, optimizer,n_epochs=25,master_model=None):
+	def train(self, Data, criterion_tar, optimizer,n_epochs=25,master_model=None):
 		"""
 		function to train the target net
 		Args - 
@@ -57,7 +57,7 @@ class target_net(nn.Module):
 		"""
 		for epoch in range(n_epochs):  # loop over the dataset multiple times
 			running_loss = 0.0
-			for i, data in enumerate(data, 0):
+			for i, data in enumerate(Data, 0):
 				# get the inputs; data is a list of [inputs, labels]
 				inputs, labels = data
 				if master_model is not None:
