@@ -227,6 +227,9 @@ class advGAN():
 				cur_step += 1
 		return self.gen,self.disc
     
-	def load_gen(self,path=self.gen_path):
-		return torch.load(path)
+	def load_gen(self,path=None):
+		if path is not None:
+			return torch.load(path)
+		else:
+			return torch.load(self.gen_path)
     
