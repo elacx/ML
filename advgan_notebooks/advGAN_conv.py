@@ -12,7 +12,7 @@ from sklearn.metrics import accuracy_score
 
 # generator / discriminator set up
 class Generator(nn.Module):
-    def __init__(self, image_nc=1,ngf = 28):
+    def __init__(self, image_nc=1,ngf = 18):
         super(Generator, self).__init__()
         self.conv1 = nn.Conv2d(1, 6, 5, 1, 0)
         self.pool = nn.MaxPool2d(2, 2) 
@@ -227,6 +227,6 @@ class advGAN():
 				cur_step += 1
 		return self.gen,self.disc
     
-	def load_gen(self):
-		return torch.load(self.gen_path)
+	def load_gen(self,path=self.gen_path):
+		return torch.load(path)
     
