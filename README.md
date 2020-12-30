@@ -27,7 +27,7 @@ To download pretrained models, please visit [this google drive folder](https://d
 - Do advGAN example on CIFAR, and use convolutional NNs
 
 ### Naming scheme for generators:
-```./advgan_models/[custom text]_[number of classes]classes_[discriminator coefficient]disc_[hinge loss coefficient]hinge_[adversarial coefficient]adv.pt```
+```./advgan_models/[custom text]_device[device name][number of classes]classes_[discriminator coefficient]disc_[hinge loss coefficient]hinge_[adversarial coefficient]adv.pt```
 
 ### Naming scheme for target models: 
 ```./target_models/[type of model]_[number of classes]classes.[extension]```
