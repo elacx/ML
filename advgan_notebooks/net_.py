@@ -1,7 +1,6 @@
 # imports 
 import torch
 from torch import nn
-from tqdm.auto import tqdm
 import torch.optim as optim
 
 # functions and classes for the target model
@@ -42,7 +41,7 @@ class target_net(nn.Module):
 		'''
 		return self.net(img)
 
-	def train(self, Data, criterion_tar, optimizer,n_epochs=25,master_model=None):
+	def train(self, Data, criterion_tar, optimizer,device,n_epochs=25,master_model=None):
 		"""
 		function to train the target net
 		Args - 
@@ -63,19 +62,20 @@ class target_net(nn.Module):
 				if master_model is not None:
 					labels = master_model(inputs.reshape(len(inputs),28*28).detach().numpy())
 					labels = torch.from_numpy(labels)
-				inputs = torch.reshape(inputs,(len(inputs),28*28))
+				inputs = inputs.reshape((len(inputs),28*28)).to(device)
+				labels = labels.to(device)         
 
 				# zero the parameter gradients
 				optimizer.zero_grad()
 
 				# forward + backward + optimize
-				outputs = self.net(inputs)
+				outputs = self.net(inputs).to(device)
 				loss = criterion_tar(outputs, labels)
 				loss.backward()
 				optimizer.step()
-			print('epoch/epochs: '+str(epoch)+'/'+str(n_epochs))
+			print('epoch/epochs: '+str(epoch+1)+'/'+str(n_epochs))
 
-	def accuracy(self, data):
+	def accuracy(self,Data,device):
 		"""
 		accuracy of the net
 		Args - 
@@ -84,13 +84,15 @@ class target_net(nn.Module):
 		Resturns-
 			accuracy: correct/total * 100
 		"""
+		#self.net.to(device)
 		correct = 0
 		total = 0
 		with torch.no_grad():
-			for data in data:
+			for data in Data:
 				images, labels = data
-				images = torch.reshape(images,(len(images),28*28))
-				outputs = self.net(images)
+				labels = labels.to(device)
+				images = torch.reshape(images,(len(images),28*28)).to(device)
+				outputs = self.net(images).to(device)
 				_, predicted = torch.max(outputs.data, 1)
 				total += labels.size(0)
 				correct += (predicted == labels).sum().item()

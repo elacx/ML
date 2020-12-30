@@ -1,7 +1,6 @@
 # imports 
 import torch
 from torch import nn
-from tqdm.auto import tqdm
 import torch.optim as optim
 from torchvision.utils import make_grid
 from torch.utils.data import DataLoader
@@ -106,19 +105,19 @@ class advGAN():
 	def __init__(self, target_net, tar_criterion=nn.CrossEntropyLoss(), criterion=nn.BCEWithLogitsLoss(),
                  n_epochs=200,batch_size=128,num_of_classes=10,lr=0.00001,
                  disc_coeff=1850.,hinge_coeff=50.,adv_coeff=200.,c=0.2,gen_path_extra='',device='cpu',display_step=500):
-		self.net = target_net
+		self.device = device
+		self.net = target_net.to(self.device)
 		self.tar_criterion = tar_criterion
 		self.criterion = criterion
 		self.n_epochs = n_epochs
 		self.display_step = display_step
 		self.batch_size = batch_size
 		self.lr = lr
-		self.device = device
 		self.num_of_classes = num_of_classes
 
-		self.gen = Generator().to(device)
+		self.gen = Generator().to(self.device)
 		self.gen_opt = torch.optim.Adam(self.gen.parameters(), lr=lr)
-		self.disc = Discriminator().to(device) 
+		self.disc = Discriminator().to(self.device)
 		self.disc_opt = torch.optim.Adam(self.disc.parameters(), lr=lr)
         
 		self.disc_coeff = disc_coeff
@@ -145,17 +144,18 @@ class advGAN():
 		return disc_loss
 
 	def get_gen_loss(self, gen, disc, criterion, target_model, tar_criterion, images, labels, num_images, device):
-		pert = gen(images)
-		fake = pert + images # Generate Fake Image Samples
+		pert = gen(images).to(device)
+		fake = (pert + images).to(device) # Generate Fake Image Samples
 		fakepred = disc(fake) # Discrimantor's prediction for fake samples
 		fake_label = torch.ones_like(fakepred,device=device) # Ground truth for fake samples
 		gen_loss = criterion(fakepred,fake_label) # Loss criteria for fake
     
 		# pert loss
-		t = torch.norm(pert,2,-1) # could also do frobenius norm 'fro'
-		C = torch.full(t.shape, self.c)
+		t = torch.norm(pert,2,-1).to(device) # could also do frobenius norm 'fro'
+		C = torch.full(t.shape, self.c).to(device)
 		diff = t-C
-		hinge_loss = torch.mean(torch.max(diff,torch.zeros(diff.shape)))
+		diff = diff.to(device)
+		hinge_loss = torch.mean(torch.max(diff,torch.zeros(diff.shape).to(device)))
     
 		#tar loss
 		opp_lbl = (labels+1)%self.num_of_classes
@@ -182,6 +182,8 @@ class advGAN():
 			for i, data in enumerate(gan_training_data, 0):
 				inputs, labels = data
 				cur_batch_size = len(inputs)
+				inputs = inputs.to(self.device)
+				labels = labels.to(self.device)
 
 				#real = torch.reshape(inputs,(len(inputs),28*28))
 				real = inputs
@@ -216,12 +218,12 @@ class advGAN():
 				if cur_step % self.display_step == 0 and cur_step>0:
 					print('epoch: ', epoch)
 					print(f"Step {cur_step}: Generator loss: {mean_generator_loss}, discriminator loss: {mean_discriminator_loss}")
-					perc_correct = accuracy_score(torch.argmax(self.net(real),dim=1),labels)
+					perc_correct = accuracy_score(torch.argmax(self.net(real),dim=1).cpu(),labels.cpu())
 					fake = self.gen(real) + real
-					perc_wrong = 1-accuracy_score(torch.argmax(self.net(fake), dim=1), labels)
+					perc_wrong = 1-accuracy_score(torch.argmax(self.net(fake), dim=1).cpu(), labels.cpu())
 					print('% wrong: '+str(perc_wrong)+' | target model % correct: '+str(perc_correct))
-					self.show_tensor_images(fake)
-					self.show_tensor_images(real)
+					self.show_tensor_images(fake.cpu())
+					self.show_tensor_images(real.cpu())
 					mean_generator_loss = 0
 					mean_discriminator_loss = 0
 				cur_step += 1
