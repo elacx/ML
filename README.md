@@ -17,7 +17,7 @@ The enviroment was not included on the Github because of its size.
 - **./advgan_models:** Directory to store generators from advGAN implementations
 - **./target_models:** Directory to store trained target models
 
-To download pretrained models, please visit [this google drive folder](https://drive.google.com/file/d/1IzMjgQrjz51piyR2AcP953qZeGBczWBs/view?usp=sharing). Move both folders from ```./model``` to ```./advgan_notebooks```.
+To download pretrained models, please visit [this google drive folder](https://drive.google.com/file/d/13LSWngNjhTBKxYqXMDG60amkmIVs3CGn/view?usp=sharing). Move both folders from ```./model``` to ```./advgan_notebooks```.
 
 ### Other Things to Do:
 - Experiment with different discriminator arcitectures 
