@@ -74,6 +74,7 @@ class Generator(nn.Module):
         leaky_relu = nn.LeakyReLU(.2)
         relu = nn.ReLU()
         tanh = nn.Tanh()
+        sigmoid = nn.Sigmoid()
         # convolution part
         x = leaky_relu(self.pool1(self.conv1(x)))
         x = leaky_relu(self.pool2(self.conv2(x)))
@@ -85,7 +86,7 @@ class Generator(nn.Module):
         # transpose conv part
         x = relu(self.norm2(self.c2(x)))
         x = relu(self.norm1(self.c1(x)))
-        x = tanh(self.c0(x))
+        x = sigmoid(self.c0(x))
         return x
 
 class Discriminator(nn.Module):
@@ -275,9 +276,10 @@ class advGAN():
 					print('epoch: ', epoch)
 					print(f"Step {cur_step}: Generator loss: {mean_generator_loss}, discriminator loss: {mean_discriminator_loss}")
 					perc_correct = accuracy_score(torch.argmax(self.net(real),dim=1).cpu(),labels.cpu())
-					fake = self.gen(real) + real
+					pert = self.gen(real)
+					fake = pert + real
 					perc_wrong = 1-accuracy_score(torch.argmax(self.net(fake), dim=1).cpu(), labels.cpu())
-					print('% wrong: '+str(perc_wrong)+' | target model % correct: '+str(perc_correct))
+					print('% wrong: '+str(perc_wrong)+' | target model % correct: '+str(perc_correct)+'| average norm: '+str(float(torch.mean(torch.norm(pert.reshape(pert.shape[0],pert.shape[-1]**2),dim=1)).detach())))
 					self.show_tensor_images(fake.cpu())
 					self.show_tensor_images(real.cpu())
 					mean_generator_loss = 0
