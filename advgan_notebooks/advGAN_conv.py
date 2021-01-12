@@ -162,7 +162,7 @@ class Generator(nn.Module):
         x = relu(self.norm3(self.conv3(x)))
         x = relu(self.normt1(self.convt1(x)))
         x = relu(self.normt2(self.convt2(x)))
-        x = tanh(self.normt3(self.convt3(x)))
+        x = tanh(self.convt3(x))
         return x
 
 class Discriminator(nn.Module):
@@ -182,7 +182,7 @@ class Discriminator(nn.Module):
     def forward(self, x):
         leaky_relu = nn.LeakyReLU(.2)
         sigmoid = nn.Sigmoid()
-        x = leaky_relu(self.norm1(self.conv1(x)))
+        x = leaky_relu(self.conv1(x))
         x = leaky_relu(self.norm2(self.conv2(x)))
         x = leaky_relu(self.norm3(self.conv3(x)))
         x = leaky_relu(self.norm4(self.conv4(x)))
