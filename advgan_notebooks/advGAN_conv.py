@@ -9,50 +9,77 @@ import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.metrics import accuracy_score
 
+'''
 # generator / discriminator set up
-# class Generator(nn.Module):
-#     def __init__(self, image_nc=1,ngf = 18):
-#         super(Generator, self).__init__()
-#         self.conv1 = nn.Conv2d(1, 6, 5, 1, 0)
-#         self.pool = nn.MaxPool2d(2, 2) 
-#         self.conv2 = nn.Conv2d(6, 16, 5)
+class Generator(nn.Module):
+    def __init__(self, image_nc=1,ngf = 18):
+        super(Generator, self).__init__()
+        self.conv1 = nn.Conv2d(1, 6, 5, 1, 0)
+        self.pool = nn.MaxPool2d(2, 2) 
+        self.conv2 = nn.Conv2d(6, 16, 5)
 
 
-#         self.fc1 = nn.Linear(16 * 8 * 8, 120) 
-#         self.fc2 = nn.Linear(120, 84)  
-#         self.fc3 = nn.Linear(84,128)
+        self.fc1 = nn.Linear(16 * 8 * 8, 120) 
+        self.fc2 = nn.Linear(120, 84)  
+        self.fc3 = nn.Linear(84,128)
 
-#         self.c3 = nn.ConvTranspose2d(128, ngf * 8, 4, 1, 0, bias=False)
-#         self.norm3 = nn.BatchNorm2d(ngf * 8)
-#         self.c2 = nn.ConvTranspose2d(ngf * 8, ngf * 4, 4, 2, 1, bias=False)
-#         self.norm2 = nn.BatchNorm2d(ngf * 4)
-#         self.c1 = nn.ConvTranspose2d( ngf * 4, ngf * 2, 4, 1, 0, bias=False)
-#         self.norm1 = nn.BatchNorm2d(ngf * 2)
-#         self.c0 = nn.ConvTranspose2d( ngf * 2, ngf, 4, 1, 0, bias=False)
-#         self.norm0 = nn.BatchNorm2d(ngf)
-#         self.c = nn.ConvTranspose2d( ngf, image_nc, 4, 2, 1, bias=False)
+        self.c3 = nn.ConvTranspose2d(128, ngf * 8, 4, 1, 0, bias=False)
+        self.norm3 = nn.BatchNorm2d(ngf * 8)
+        self.c2 = nn.ConvTranspose2d(ngf * 8, ngf * 4, 4, 2, 1, bias=False)
+        self.norm2 = nn.BatchNorm2d(ngf * 4)
+        self.c1 = nn.ConvTranspose2d( ngf * 4, ngf * 2, 4, 1, 0, bias=False)
+        self.norm1 = nn.BatchNorm2d(ngf * 2)
+        self.c0 = nn.ConvTranspose2d( ngf * 2, ngf, 4, 1, 0, bias=False)
+        self.norm0 = nn.BatchNorm2d(ngf)
+        self.c = nn.ConvTranspose2d( ngf, image_nc, 4, 2, 1, bias=False)
 
-#     def forward(self,x):
-#         leaky_relu = nn.LeakyReLU(.2)
-#         relu = nn.ReLU()
-#         tanh = nn.Tanh()
-#         # convolution part
-#         x = leaky_relu(self.pool(self.conv1(x)))
-#         x = leaky_relu(self.conv2(x))
-#         x = x.view(-1, 16 * 8 * 8)
-#         # linear part
-#         x = leaky_relu(self.fc1(x))
-#         x = leaky_relu(self.fc2(x))
-#         x = leaky_relu(self.fc3(x))
-#         x = x.reshape(x.shape[0],x.shape[1],1,1)
-#         # transpose conv part
-#         x = relu(self.norm3(self.c3(x)))
-#         x = relu(self.norm2(self.c2(x)))
-#         x = relu(self.norm1(self.c1(x)))
-#         x = relu(self.norm0(self.c0(x)))
-#         x = tanh(self.c(x))
-#         return x
+    def forward(self,x):
+        leaky_relu = nn.LeakyReLU(.2)
+        relu = nn.ReLU()
+        tanh = nn.Tanh()
+        # convolution part
+        x = leaky_relu(self.pool(self.conv1(x)))
+        x = leaky_relu(self.conv2(x))
+        x = x.view(-1, 16 * 8 * 8)
+        # linear part
+        x = leaky_relu(self.fc1(x))
+        x = leaky_relu(self.fc2(x))
+        x = leaky_relu(self.fc3(x))
+        x = x.reshape(x.shape[0],x.shape[1],1,1)
+        # transpose conv part
+        x = relu(self.norm3(self.c3(x)))
+        x = relu(self.norm2(self.c2(x)))
+        x = relu(self.norm1(self.c1(x)))
+        x = relu(self.norm0(self.c0(x)))
+        x = tanh(self.c(x))
+        return x
+class Discriminator(nn.Module):
+    def __init__(self, image_nc=1):
+        super(Discriminator, self).__init__()
+        # MNIST: 1*28*28
+        model = [
+            nn.Conv2d(image_nc, 8, kernel_size=4, stride=2, padding=0, bias=True),
+            nn.LeakyReLU(0.2),
+            # 8*13*13
+            nn.Conv2d(8, 16, kernel_size=4, stride=2, padding=0, bias=True),
+            nn.BatchNorm2d(16),
+            nn.LeakyReLU(0.2),
+            # 16*5*5
+            nn.Conv2d(16, 32, kernel_size=4, stride=2, padding=0, bias=True),
+            nn.BatchNorm2d(32),
+            nn.LeakyReLU(0.2),
+            nn.Conv2d(32, 1, 1),
+            nn.Sigmoid()
+            # 32*1*1
+        ]
+        self.model = nn.Sequential(*model)
 
+    def forward(self, x):
+        output = self.model(x).squeeze()
+        return output
+'''
+
+'''
 class Generator(nn.Module):
     def __init__(self, image_nc=1,ngf = 18):
         super(Generator, self).__init__()
@@ -109,31 +136,59 @@ class Discriminator(nn.Module):
         x = leaky_relu(self.fc2(x))
         x = leaky_relu(self.fc3(x))
         return x
+'''
+class Generator(nn.Module):
+    def __init__(self, image_nc=1,ngf = 18):
+        super(Generator, self).__init__()
+        self.conv1 = nn.Conv2d(1,8,kernel_size=4,stride=2,padding=1,bias=True)
+        self.norm1 = nn.BatchNorm2d(8)
+        self.conv2 = nn.Conv2d(8,16,kernel_size=4,stride=2,padding=1,bias=True)
+        self.norm2 = nn.BatchNorm2d(16)
+        self.conv3 = nn.Conv2d(16,32,kernel_size=2,stride=2,padding=1,bias=True)
+        self.norm3 = nn.BatchNorm2d(32)
 
-# class Discriminator(nn.Module):
-#     def __init__(self, image_nc=1):
-#         super(Discriminator, self).__init__()
-#         # MNIST: 1*28*28
-#         model = [
-#             nn.Conv2d(image_nc, 8, kernel_size=4, stride=2, padding=0, bias=True),
-#             nn.LeakyReLU(0.2),
-#             # 8*13*13
-#             nn.Conv2d(8, 16, kernel_size=4, stride=2, padding=0, bias=True),
-#             nn.BatchNorm2d(16),
-#             nn.LeakyReLU(0.2),
-#             # 16*5*5
-#             nn.Conv2d(16, 32, kernel_size=4, stride=2, padding=0, bias=True),
-#             nn.BatchNorm2d(32),
-#             nn.LeakyReLU(0.2),
-#             nn.Conv2d(32, 1, 1),
-#             nn.Sigmoid()
-#             # 32*1*1
-#         ]
-#         self.model = nn.Sequential(*model)
+        self.convt1 = nn.ConvTranspose2d(32,16,kernel_size=3,stride=2,padding=1,bias=False)
+        self.normt1 = nn.BatchNorm2d(16)
+        self.convt2 = nn.ConvTranspose2d(16,8,kernel_size=4,stride=2,padding=1,bias=False)
+        self.normt2 = nn.BatchNorm2d(8)
+        self.convt3 = nn.ConvTranspose2d(8,1,kernel_size=4,stride=2,padding=1,bias=False)
+        self.normt3 = nn.BatchNorm2d(1)
 
-#     def forward(self, x):
-#         output = self.model(x).squeeze()
-#         return output
+    def forward(self,x):
+        relu = nn.ReLU()
+        tanh = nn.Tanh()
+        x = relu(self.norm1(self.conv1(x)))
+        x = relu(self.norm2(self.conv2(x)))
+        x = relu(self.norm3(self.conv3(x)))
+        x = relu(self.normt1(self.convt1(x)))
+        x = relu(self.normt2(self.convt2(x)))
+        x = tanh(self.normt3(self.convt3(x)))
+        return x
+
+class Discriminator(nn.Module):
+    def __init__(self, image_nc=1):
+        super(Discriminator, self).__init__()
+        self.conv1 = nn.Conv2d(1,8,kernel_size=4,stride=2,padding=1,bias=True)
+        self.norm1 = nn.BatchNorm2d(8)
+        self.conv2 = nn.Conv2d(8,16,kernel_size=3,stride=2,padding=1,bias=True)
+        self.norm2 = nn.BatchNorm2d(16)
+        self.conv3 = nn.Conv2d(16,8,kernel_size=3,stride=2,padding=1,bias=True)
+        self.norm3 = nn.BatchNorm2d(8)
+        self.conv4 = nn.Conv2d(8,4,kernel_size=3,stride=2,padding=1,bias=True)
+        self.norm4 = nn.BatchNorm2d(4)
+        self.conv5 = nn.Conv2d(4,1,kernel_size=3,stride=2,padding=1,bias=True)
+        self.norm5 = nn.BatchNorm2d(1)
+
+    def forward(self, x):
+        leaky_relu = nn.LeakyReLU(.2)
+        sigmoid = nn.Sigmoid()
+        x = leaky_relu(self.norm1(self.conv1(x)))
+        x = leaky_relu(self.norm2(self.conv2(x)))
+        x = leaky_relu(self.norm3(self.conv3(x)))
+        x = leaky_relu(self.norm4(self.conv4(x)))
+        x = sigmoid(self.norm5(self.conv5(x)))
+        x = x.reshape(x.shape[0],)
+        return x
 
 # advgan class
 class advGAN():
