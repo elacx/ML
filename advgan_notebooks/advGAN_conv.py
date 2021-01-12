@@ -263,11 +263,14 @@ class advGAN():
 		gen_loss = criterion(fakepred,fake_label) # Loss criteria for fake
     
 		# pert loss
-		t = torch.norm(pert,2,-1).to(device) # could also do frobenius norm 'fro'
-		C = torch.full(t.shape, self.c).to(device)
-		diff = t-C
-		diff = diff.to(device)
-		hinge_loss = torch.mean(torch.max(diff,torch.zeros(diff.shape).to(device)))
+		Linf = pert.reshape(pert.shape[0],pert.shape[-1]**2).to(device)
+		max_diff = torch.max(Linf - torch.full(Linf.shape, self.c).to(device),torch.zeros(Linf.shape).to(device)).to(device)
+		hinge_loss = torch.mean(max_diff).to(device)
+# 		t = torch.norm(pert,2,-1).to(device) # could also do frobenius norm 'fro'
+# 		C = torch.full(t.shape, self.c).to(device)
+# 		diff = t-C
+# 		diff = diff.to(device)
+# 		hinge_loss = torch.mean(torch.max(diff,torch.zeros(diff.shape).to(device)))
     
 		#tar loss
 		opp_lbl = (labels+1)%self.num_of_classes
