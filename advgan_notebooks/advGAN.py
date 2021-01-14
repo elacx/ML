@@ -106,7 +106,7 @@ class advGAN():
                  n_epochs=200,batch_size=128,num_of_classes=10,lr=0.00001,
                  disc_coeff=1850.,hinge_coeff=50.,adv_coeff=200.,c=0.2,gen_path_extra='',device='cpu',display_step=500):
 		self.device = device
-		self.net = target_net.to(self.device)
+		self.net = target_net#.to(self.device)
 		self.tar_criterion = tar_criterion
 		self.criterion = criterion
 		self.n_epochs = n_epochs

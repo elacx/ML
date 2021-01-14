@@ -8,7 +8,6 @@ from torch.utils.data.sampler import SubsetRandomSampler
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.metrics import accuracy_score
-
 '''
 # generator / discriminator set up
 class Generator(nn.Module):
@@ -137,6 +136,8 @@ class Discriminator(nn.Module):
         x = leaky_relu(self.fc3(x))
         return x
 '''
+
+
 class Generator(nn.Module):
     def __init__(self, image_nc=1,ngf = 18):
         super(Generator, self).__init__()
