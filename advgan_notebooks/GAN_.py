@@ -3,8 +3,6 @@ import torch
 from torch import nn
 import torch.optim as optim
 from torchvision.utils import make_grid
-#from torch.utils.data import DataLoader
-#from torch.utils.data.sampler import SubsetRandomSampler
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.metrics import accuracy_score
@@ -72,6 +70,13 @@ class advGAN():
 		self.c = c
 		self.gen_path = './advgan_models/'+gen_path_extra+'_device_'+device+'_'+str(self.num_of_classes)+'classes_'+str(disc_coeff).replace('.','p')+'disc_'+str(hinge_coeff).replace('.','p')+'hinge_'+str(c).replace('.','p')+'c_'+str(adv_coeff).replace('.','p')+'adv.pt'
 		print('path: ',self.gen_path)
+        
+	def compute(self,func,data):
+		try:
+			output = func(data)
+		except:
+			output = func(data.reshape(data.shape[0],data.shape[-1]**2))
+		return output
 
 	def gen_function(self,gen,data):
 		try:
@@ -100,11 +105,18 @@ class advGAN():
 		return accuracy_score(torch.argmax(preds,dim=1).cpu(),labels.cpu())
 
 	def get_disc_loss(self, gen, disc, criterion, real, num_images, device):
-		fake = self.gen_function(gen,real) + real # Generate Fake Image Samples
+		try:
+			fake = self.gen_function(gen,real) + real # Generate Fake Image Samples
+		except:
+			fake = self.gen_function(gen,real) + real.reshape(real.shape[0],real.shape[-1]**2)
 		fakepred = disc(fake.detach()) # Discrimantor's prediction for fake samples
 		fake_label = torch.zeros_like(fakepred,device=device) # Ground truth for fake samples
 		lossF = criterion(fakepred,fake_label) # Loss criteria for fake
-		realpred = disc(real).to(device) # Discriminator's prediction for real samples
+		realpred = self.compute(disc,real).to(device)
+# 		try:
+# 			realpred = disc(real).to(device) # Discriminator's prediction for real samples
+# 		except:
+# 			realpred = disc(real.reshape(real.shape[0],real.shape[-1]**2)).to(device)
 		real_label = torch.ones_like(realpred,device=device)  #Ground truth for real samples
 		lossR = criterion(realpred,real_label) # Loss criteria on true
 		disc_loss = 0.5*(lossF + lossR)*self.disc_coeff #Discriminator's loss
@@ -112,7 +124,10 @@ class advGAN():
 
 	def get_gen_loss(self, gen, disc, criterion, target_model, tar_criterion, images, labels, num_images, device):
 		pert = self.gen_function(gen,images).to(device)
-		fake = (pert + images).to(device) # Generate Fake Image Samples
+		try:
+			fake = (pert + images).to(device) # Generate Fake Image Samples
+		except:
+			fake = (pert + images.reshape(images.shape[0],images.shape[-1]**2)).to(device)
 		fakepred = disc(fake).to(device) # Discrimantor's prediction for fake samples
 		fake_label = torch.ones_like(fakepred,device=device) # Ground truth for fake samples
 		gen_loss = criterion(fakepred,fake_label) # Loss criteria for fake
@@ -195,7 +210,11 @@ class advGAN():
 					print(f"Step {cur_step}: Generator loss: {mean_generator_loss}, discriminator loss: {mean_discriminator_loss}")
 					perc_correct = self.accuracy(self.net,real,labels)
 					pert = self.gen_function(self.gen,real)
-					fake = pert + real
+					try:
+						fake = pert + real
+					except:
+						fake = pert + real.reshape(real.shape[0],real.shape[-1]**2)
+					pert = pert.reshape(pert.shape[0],1,28,28)
 					perc_wrong = 1-self.accuracy(self.net,fake,labels)
 					print('% wrong: '+str(perc_wrong)+' | target model % correct: '+str(perc_correct)+' | avg. frobenius norm: '+str(float(torch.mean(torch.norm(pert.reshape(pert.shape[0],pert.shape[-1]**2),dim=1)).detach())))
 					self.show_tensor_images(fake.cpu())
