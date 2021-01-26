@@ -6,18 +6,23 @@ Models are too large to be pushed to Github, so they must be shared via another 
 - ```python3 -m venv NAME```
 - ```source NAME/bin/activate```
 - ```pip install -r requirments.txt```
-The enviroment was not included on the Github because of its size. 
+The enviroment was not included on the Github because of its size. There are also the required files to set up a Conda enviroment, see **requirments_conda.yml** and **requirments_conda.txt**.
 
 ## ./advgan_notebooks
-- **advgan_.ipynb:** Basic advGAN implementation in PyTorch
-- **advgan_rftarget.ipynb:** advGAN implementation where target model is a random forest classifier
-- **advggan_rfDistilled.ipynb:** advGAN implementation where the target model is a NN distilled from query access to a random foret model
-- **advGAN.py:** Classes and functions to create/save a the generator from the advGAN implementation
-- **net_.py:** Supporting code for creating, training, and testing a target model
+- **pytorch_mnist.ipynb:** Basic advGAN implementation in PyTorch on the MNIST data set. Can use feedforward or convolutional nets
+- **rf_mnist.ipynb:** advGAN implementation where target model is a random forest classifier
+- **distilled_rf_mnist.ipynb:** advGAN implementation where the target model is a NN distilled from query access to a random foret model
+- **pytorch_cifar10.ipynb:** advGAN implementation on the CIFAR-10 dataset, uses convolutional NNs
+- **testing.ipynb:** Ignore, used by me for checking tensor shapes etc
+- **GAN_.py:** Classes and functions to create/save a the generator from the advGAN implementation
+- **gans_archs_.py:** Classes and functions to for various generator/discriminator architectures
+- **net_.py:** Supporting code for creating, training, and testing a target model (feedforward for MNIST)
+- **net_conv.py:** Supporting code for creating, training, and testing a target model (convolutional for MNIST)
+- **net_conv_cifar.py:** Supporting code for creating, training, and testing a target model (convolutional for CIFAR-10)
 - **./advgan_models:** Directory to store generators from advGAN implementations
 - **./target_models:** Directory to store trained target models
 
-To download pretrained models, please visit [this google drive folder](https://drive.google.com/file/d/13LSWngNjhTBKxYqXMDG60amkmIVs3CGn/view?usp=sharing). Move both folders from ```./model``` to ```./advgan_notebooks```.
+To download pretrained models, please visit [this google drive folder](https://drive.google.com/file/d/1Rjr-kR-pw8ahv9hTYlnbF-Tu5mHTcdUc/view?usp=sharing) (models updated 1/26/21). Move both folders from ```./model``` to ```./advgan_notebooks```.
 
 ### Other Things to Do:
 - Experiment with different discriminator arcitectures 
