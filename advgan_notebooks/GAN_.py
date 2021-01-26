@@ -97,9 +97,9 @@ class advGAN():
 			preds = tar_net(data)
 		except:
 			try:
-				preds = tar_net(data.reshape(data.shape[0],data.shape[-1]**2))
+				preds = tar_net(data.reshape(data.shape[0],28*28))
 			except:
-				preds = tar_net(data.reshape(data.shape[0],data.shape[-1]**2).detach().numpy())
+				preds = tar_net(data.reshape(data.shape[0],784).cpu().detach().numpy())
 		if not torch.is_tensor(preds):
 			preds = torch.from_numpy(preds)
 		return accuracy_score(torch.argmax(preds,dim=1).cpu(),labels.cpu())
@@ -147,7 +147,7 @@ class advGAN():
 			try:
 				preds = target_model(fake.reshape(fake.shape[0],fake.shape[-1]**2))
 			except:
-				preds = torch.from_numpy(target_model(fake.reshape(fake.shape[0],fake.shape[-1]**2).detach().numpy()))
+				preds = torch.from_numpy(target_model(fake.reshape(fake.shape[0],28*28).cpu().detach().numpy())).to(device)
 
 		adv_loss = tar_criterion(preds, opp_lbl)
 
