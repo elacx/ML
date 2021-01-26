@@ -12,7 +12,6 @@ The enviroment was not included on the Github because of its size. There are als
 - **pytorch_mnist.ipynb:** Basic advGAN implementation in PyTorch on the MNIST data set. Can use feedforward or convolutional nets
 - **rf_mnist.ipynb:** advGAN implementation where target model is a random forest classifier
 - **distilled_rf_mnist.ipynb:** advGAN implementation where the target model is a NN distilled from query access to a random foret model
--- sp f;lqjf
 - **pytorch_cifar10.ipynb:** advGAN implementation on the CIFAR-10 dataset, uses convolutional NNs
 - **testing.ipynb:** Ignore, used by me for checking tensor shapes etc
 - **GAN_.py:** Classes and functions to create/save a the generator from the advGAN implementation
