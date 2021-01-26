@@ -12,6 +12,7 @@ The enviroment was not included on the Github because of its size. There are als
 - **pytorch_mnist.ipynb:** Basic advGAN implementation in PyTorch on the MNIST data set. Can use feedforward or convolutional nets
 - **rf_mnist.ipynb:** advGAN implementation where target model is a random forest classifier
 - **distilled_rf_mnist.ipynb:** advGAN implementation where the target model is a NN distilled from query access to a random foret model
+-- sp f;lqjf
 - **pytorch_cifar10.ipynb:** advGAN implementation on the CIFAR-10 dataset, uses convolutional NNs
 - **testing.ipynb:** Ignore, used by me for checking tensor shapes etc
 - **GAN_.py:** Classes and functions to create/save a the generator from the advGAN implementation
@@ -25,10 +26,12 @@ The enviroment was not included on the Github because of its size. There are als
 To download pretrained models, please visit [this google drive folder](https://drive.google.com/file/d/1Rjr-kR-pw8ahv9hTYlnbF-Tu5mHTcdUc/view?usp=sharing) (models updated 1/26/21). Move both folders from ```./model``` to ```./advgan_notebooks```.
 
 ### Other Things to Do:
+- advGAN attack on backdoor attacked model, what happens?
+- Do other attacks on distilled feedforward transfer to RF model? 
 - Experiment with different discriminator arcitectures 
 - Dynamic distillation (as they did in the paper)
 - GAN stabalization techniques applied to advGAN
-- Concatenate a small noise vector to the input image
+- Concatenate a small noise vector to the input image 
 - Do advGAN example on CIFAR, and use convolutional NNs
 
 ### Naming scheme for generators:
