@@ -82,7 +82,7 @@ class advGAN():
 		try:
 			pred = gen(data)
 		except:
-			pred = gen(data.reshape(data.shape[0],data.shape[-1]**2))
+			pred = gen(data.reshape(data.shape[0],28*28))#data.shape[-1]**2))
 		return pred
     
 	def show_tensor_images(self,image_tensor, num_images=25):
@@ -127,7 +127,7 @@ class advGAN():
 		try:
 			fake = (pert + images).to(device) # Generate Fake Image Samples
 		except:
-			fake = (pert + images.reshape(images.shape[0],images.shape[-1]**2)).to(device)
+			fake = (pert + images.reshape(images.shape[0],images.shape[-1]**2)).to(device)  
 		fakepred = disc(fake).to(device) # Discrimantor's prediction for fake samples
 		fake_label = torch.ones_like(fakepred,device=device) # Ground truth for fake samples
 		gen_loss = criterion(fakepred,fake_label) # Loss criteria for fake

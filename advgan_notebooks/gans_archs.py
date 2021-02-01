@@ -31,35 +31,57 @@ class Generator1(nn.Module):
 		hidden_dim: size of hidden internal dimension (to scale)
 	Generator class
 	"""
-	def __init__(self, im_dim=784, hidden_dim=392,include_noise=False,device='cpu'):
+	def __init__(self, im_dim=28*28, hidden_dim=392):
 		super(Generator1, self).__init__()
-		self.include_noise = include_noise
-		self.device = device
-		if include_noise: 
-			# Build the neural network
-			self.gen = nn.Sequential(
-				get_generator_block(im_dim+10, hidden_dim*2),
-				get_generator_block(hidden_dim*2, hidden_dim * 4),
-				get_generator_block(hidden_dim * 4, hidden_dim * 6),
-				get_generator_block(hidden_dim * 6, hidden_dim * 2),
-				nn.Linear(hidden_dim * 2, im_dim),
-				nn.Sigmoid())
-		else:
-			# Build the neural network
-			self.gen = nn.Sequential(
-				get_generator_block(im_dim, hidden_dim*2),
-				get_generator_block(hidden_dim*2, hidden_dim * 4),
-				get_generator_block(hidden_dim * 4, hidden_dim * 6),
-				get_generator_block(hidden_dim * 6, hidden_dim * 2),
-				nn.Linear(hidden_dim * 2, im_dim),
-				nn.Sigmoid())
+		# Build the neural network
+		self.gen = nn.Sequential(
+			get_generator_block(im_dim, hidden_dim*2),
+			get_generator_block(hidden_dim*2, hidden_dim * 4),
+			get_generator_block(hidden_dim * 4, hidden_dim * 6),
+			get_generator_block(hidden_dim * 6, hidden_dim * 2),
+			nn.Linear(hidden_dim * 2, im_dim),
+			nn.Sigmoid())
 
 	def forward(self, img):
-		if self.include_noise:
-			noise = torch.normal(0,1,(img.shape[0],10)).to(self.device)
-			return self.gen(torch.cat((img,noise),dim=1).to(self.device))
-		else:
-			return self.gen(img)
+		return self.gen(img)
+
+# class Generator1(nn.Module):
+# 	"""
+# 	Creates the generator
+# 	Args - 
+# 		im_dim: dimension of image
+# 		hidden_dim: size of hidden internal dimension (to scale)
+# 	Generator class
+# 	"""
+# 	def __init__(self, im_dim=784, hidden_dim=392,include_noise=False,device='cpu'):
+# 		super(Generator1, self).__init__()
+# 		self.include_noise = include_noise
+# 		self.device = device
+# 		if self.include_noise: 
+# 			# Build the neural network
+# 			self.gen = nn.Sequential(
+# 				get_generator_block(im_dim+10, hidden_dim*2),
+# 				get_generator_block(hidden_dim*2, hidden_dim * 4),
+# 				get_generator_block(hidden_dim * 4, hidden_dim * 6),
+# 				get_generator_block(hidden_dim * 6, hidden_dim * 2),
+# 				nn.Linear(hidden_dim * 2, im_dim),
+# 				nn.Sigmoid())
+# 		else:
+# 			# Build the neural network
+# 			self.gen = nn.Sequential(
+# 				get_generator_block(im_dim, hidden_dim*2),
+# 				get_generator_block(hidden_dim*2, hidden_dim * 4),
+# 				get_generator_block(hidden_dim * 4, hidden_dim * 6),
+# 				get_generator_block(hidden_dim * 6, hidden_dim * 2),
+# 				nn.Linear(hidden_dim * 2, im_dim),
+# 				nn.Sigmoid())
+
+# 	def forward(self, img):
+# 		if self.include_noise:
+# 			noise = torch.normal(0,1,(img.shape[0],10)).to(self.device)
+# 			return self.gen(torch.cat((img,noise),dim=1).to(self.device))
+# 		else:
+# 			return self.gen(img)
     
 def get_discriminator_block(input_dim, output_dim):
 	"""
@@ -82,7 +104,7 @@ class Discriminator1(nn.Module):
 		hidden_dim: size of hidden internal dimension (to scale)
 	Generator class
 	"""
-	def __init__(self, im_dim=784, hidden_dim=128):
+	def __init__(self, im_dim=28*28, hidden_dim=128):
 		super(Discriminator1, self).__init__()
 		self.disc = nn.Sequential(
             get_discriminator_block(im_dim, hidden_dim * 4),
