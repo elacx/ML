@@ -7,6 +7,25 @@ import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.metrics import accuracy_score
 
+def poison_func(imgs,lbls,p_ratio=0.25,num_classes=10):
+    altered_imgs = []
+    altered_lbls = []
+    for img,lbl in zip(imgs,lbls):
+        if np.random.uniform(0,1) <= p_ratio:
+            img[0][26][26] = 1.
+            img[0][24][26] = 1.
+            img[0][25][25] = 1.
+            img[0][24][24] = 1.
+            img[0][26][24] = 1.
+            altered_imgs.append(img)
+            altered_lbls.append( (int((lbl).detach().numpy())+1)%num_classes)
+        else:
+            altered_imgs.append(img)
+            altered_lbls.append(lbl.detach().numpy())
+    tar_img = torch.Tensor(len(imgs),28,28)
+    tar_lbl = torch.Tensor(len(imgs))
+    return torch.cat(altered_imgs,out=tar_img).reshape(len(imgs),28*28),torch.from_numpy(np.array(altered_lbls))
+
 # advgan class
 class advGAN():
 	"""
@@ -41,14 +60,14 @@ class advGAN():
                  n_epochs=200,batch_size=128,
                  num_of_classes=10,lr=0.00001,
                  disc_coeff=1850.,hinge_coeff=50.,adv_coeff=200.,c=0.2,
-                 gen_path_extra='',device='cpu',display_step=500,shape=(1,28,28),gen_arch='cov'):
-		
+                 gen_path_extra='',device='cpu',display_step=500,shape=(1,28,28),gen_arch='cov',
+                 poison=False):
 		self.device = device
 		try:
 			self.net = target_net.to(self.device)
 		except:
 			self.net = target_net
-		
+		self.poison = poison
 		self.tar_criterion = tar_criterion
 		self.criterion = criterion
 		self.n_epochs = n_epochs
@@ -166,7 +185,11 @@ class advGAN():
 			running_loss = 0.0
 			
 			for i, data in enumerate(gan_training_data, 0):
-				inputs, labels = data
+				if self.poison:
+					inputs_, labels_ = data
+					inputs, labels = poison_func(inputs_,labels_,p_ratio=0.25,num_classes=self.num_of_classes)
+				else:
+					inputs, labels = data
 				labels = labels.to(self.device)
 				cur_batch_size = len(inputs)
 				
@@ -221,6 +244,10 @@ class advGAN():
 					self.show_tensor_images(real.cpu())
 					mean_generator_loss = 0
 					mean_discriminator_loss = 0
+					plt.figure()
+					plt.imshow(torch.mean(pert,dim=0).reshape(28,28).detach().cpu().numpy(),cmap='gray')
+					plt.colorbar()
+					plt.show()
 				cur_step += 1
 		return self.gen,self.disc
     
