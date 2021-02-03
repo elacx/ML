@@ -81,8 +81,9 @@ class target_net(nn.Module):
 				# get the inputs; data is a list of [inputs, labels]
 				inputs, labels = data
 				if master_model is not None:
-					labels = master_model(inputs.reshape(len(inputs),28*28).detach().numpy())
-					labels = torch.from_numpy(labels)
+					labels = master_model(inputs.reshape(len(inputs),28*28).detach().cpu().numpy())
+					labels = torch.from_numpy(labels).to(device)
+					inputs = inputs.reshape(inputs.shape[0],28*28).to(device)
 				elif poison is not None:     
 					inputs,labels = poison_func(inputs,labels,p_ratio=poison,num_classes=self.num_classes) 
 					inputs = inputs.to(device)
