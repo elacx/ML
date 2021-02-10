@@ -1,6 +1,7 @@
 import torch.nn as nn
 import torch.nn.functional as F
 import torch
+from poison_ import poison_func1_cifar
 
 class BasicBlock(nn.Module):
     expansion = 1
@@ -62,7 +63,7 @@ class target_net(nn.Module):
         out = self.linear(out)
         return out
     
-    def train(self, Data, criterion_tar, optimizer, device, n_epochs=25):
+    def train(self, Data, criterion_tar, optimizer, device, n_epochs=25,poison=None):
         """
         function to train the target net
         Args - 
@@ -79,10 +80,15 @@ class target_net(nn.Module):
             running_loss = 0.0
             for i, data in enumerate(Data, 0):
                 # get the inputs; data is a list of [inputs, labels]
-                inputs, labels = data
-                inputs = inputs.to(device)
-                labels = labels.to(device) 
-
+                inputs_, labels_ = data
+                poison is not None:
+                    inputs, labels = poison_func1_cifar(inputs_,labels_,p_ratio=poison)
+                    inputs = inputs.to(device)
+                    labels = labels.to(device) 
+                else:
+                    inputs = inputs_.to(device)
+                    labels = labels_.to(device) 
+                    
                 # zero the parameter gradients
                 optimizer.zero_grad()
 

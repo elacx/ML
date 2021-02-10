@@ -6,25 +6,8 @@ from torchvision.utils import make_grid
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.metrics import accuracy_score
-
-def poison_func(imgs,lbls,p_ratio=0.25,num_classes=10):
-    altered_imgs = []
-    altered_lbls = []
-    for img,lbl in zip(imgs,lbls):
-        if np.random.uniform(0,1) <= p_ratio:
-            img[0][26][26] = 1.
-            img[0][24][26] = 1.
-            img[0][25][25] = 1.
-            img[0][24][24] = 1.
-            img[0][26][24] = 1.
-            altered_imgs.append(img)
-            altered_lbls.append( (int((lbl).detach().numpy())+1)%num_classes)
-        else:
-            altered_imgs.append(img)
-            altered_lbls.append(lbl.detach().numpy())
-    tar_img = torch.Tensor(len(imgs),28,28)
-    tar_lbl = torch.Tensor(len(imgs))
-    return torch.cat(altered_imgs,out=tar_img).reshape(len(imgs),28*28),torch.from_numpy(np.array(altered_lbls))
+from poisons_ import poison_func1, poison_func2, poison_func1_cifar
+poison_func = poison_func2
 
 # advgan class
 class advGAN():
