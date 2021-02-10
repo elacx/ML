@@ -13,11 +13,15 @@ The enviroment was not included on the Github because of its size. There are als
 - **rf_mnist.ipynb:** advGAN implementation where target model is a random forest classifier
 - **distilled_rf_mnist.ipynb:** advGAN implementation where the target model is a NN distilled from query access to a random foret model
 - **pytorch_cifar10.ipynb:** advGAN implementation on the CIFAR-10 dataset, uses convolutional NNs
+- **pytorch_poisoned_model.ipynb:** Experiments using advGAN on poisoned networks
+- **pytorch_poisoned_model-Copy1.ipynb:** Copy
+- **pytorch_cifar10_poisoned.ipynb:** Unfinished poisoned investigations on CIFAR-10 dataset
 - **testing.ipynb:** Ignore, used by me for checking tensor shapes etc
 - **GAN_.py:** Classes and functions to create/save a the generator from the advGAN implementation
 - **gans_archs_.py:** Classes and functions to for various generator/discriminator architectures
 - **net_.py:** Supporting code for creating, training, and testing a target model (feedforward for MNIST)
 - **net_conv.py:** Supporting code for creating, training, and testing a target model (convolutional for MNIST)
+- **poison_.py:** Functions for poisoning experiments. 
 - **net_conv_cifar.py:** Supporting code for creating, training, and testing a target model (convolutional for CIFAR-10)
 - **./advgan_models:** Directory to store generators from advGAN implementations
 - **./target_models:** Directory to store trained target models
