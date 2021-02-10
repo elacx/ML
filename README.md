@@ -22,7 +22,7 @@ The enviroment was not included on the Github because of its size. There are als
 - **./advgan_models:** Directory to store generators from advGAN implementations
 - **./target_models:** Directory to store trained target models
 
-To download pretrained models, please visit [this google drive folder](https://drive.google.com/file/d/1Rjr-kR-pw8ahv9hTYlnbF-Tu5mHTcdUc/view?usp=sharing) (models updated 1/26/21). Move both folders from ```./model``` to ```./advgan_notebooks```.
+To download pretrained models, please visit [this google drive folder](https://drive.google.com/file/d/1xoK0PJIr8G2vih830ANEaEoodwfGRwSd/view?usp=sharing) (models updated 2/10/21). Move both folders from ```./model``` to ```./advgan_notebooks```.
 
 ### Other Things to Do:
 - advGAN attack on backdoor attacked model, what happens?
