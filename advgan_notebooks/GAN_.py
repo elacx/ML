@@ -223,14 +223,15 @@ class advGAN():
 					pert = pert.reshape(pert.shape[0],1,28,28)
 					perc_wrong = 1-self.accuracy(self.net,fake,labels)
 					print('% wrong: '+str(perc_wrong)+' | target model % correct: '+str(perc_correct)+' | avg. frobenius norm: '+str(float(torch.mean(torch.norm(pert.reshape(pert.shape[0],pert.shape[-1]**2),dim=1)).detach())))
+					print('gen loss: ',float(gen_loss.cpu().detach().numpy()),' | disc loss: ',float(disc_loss.cpu().detach().numpy()))                
 					self.show_tensor_images(fake.cpu())
 					self.show_tensor_images(real.cpu())
 					mean_generator_loss = 0
 					mean_discriminator_loss = 0
-					plt.figure()
-					plt.imshow(torch.mean(pert,dim=0).reshape(28,28).detach().cpu().numpy(),cmap='gray')
-					plt.colorbar()
-					plt.show()
+# 					plt.figure()
+# 					plt.imshow(torch.mean(pert,dim=0).reshape(28,28).detach().cpu().numpy(),cmap='gray')
+# 					plt.colorbar()
+# 					plt.show()
 				cur_step += 1
 		return self.gen,self.disc
     
