@@ -6,6 +6,8 @@ from torch.autograd import Variable
 from torch.autograd import Function
 from torch.nn.parameter import Parameter 
 from torchsummary import summary
+from torchvision.utils import make_grid
+import matplotlib.pyplot as plt
 
 
 # torch network, predictive coding, DNN 
@@ -42,28 +44,38 @@ class PredNet(nn.Module):
         w = l2inv.reshape(-1,4,6,6).to(self.dev)
         cT1 = self.convT1(c3).to(self.dev)
         cT2 = self.convT2(c2).to(self.dev)
-        cT3 = self.convT3(c1).to(self.dev)
+        self.cT3 = self.convT3(c1).to(self.dev)
         # errors
-        self.L1 = torch.mean(torch.norm(torch.norm(torch.norm(cT3-x,dim=-1),dim=-1),dim=-1)).to(self.dev)
-        self.L2 = torch.mean(torch.norm(torch.norm(torch.norm(c1-cT2,dim=-1),dim=-1),dim=-1)).to(self.dev)
-        self.L3 = torch.mean(torch.norm(torch.norm(torch.norm(c2-cT1,dim=-1),dim=-1),dim=-1)).to(self.dev)
-        self.L4 = torch.mean(torch.norm(torch.norm(torch.norm(c3-w,dim=-1),dim=-1),dim=-1)).to(self.dev)
-        self.L5 = torch.mean(torch.norm(l1-l1inv,dim=-1)).to(self.dev)
+        MSE = nn.MSELoss()
+        self.L1 = MSE(self.cT3,x).to(self.dev)
+        self.L2 = MSE(c1,cT2).to(self.dev)
+        self.L3 = MSE(c2,cT1).to(self.dev)
+        self.L4 = MSE(c3,w).to(self.dev)
+        self.L5 = MSE(l1,l1inv).to(self.dev)
         self.LT = (self.L1+self.L2+self.L3+self.L4+self.L5).to(self.dev)
-        return l2
+        return l2 
     
+    def show_tensor_images(self,image_tensor, num_images=25):
+        size = (1,28,28)
+        image_unflat = image_tensor.detach().cpu().view(-1, *size)
+        image_grid = make_grid(image_unflat[:num_images], nrow=5)
+        plt.imshow(image_grid.permute(1, 2, 0).squeeze())
+        plt.show()
+        
     def train(self, train_data, loss_fn=nn.CrossEntropyLoss(), n_epochs=50, save=True):
         for epoch in range(n_epochs):
             for data,target in train_data:
                 data, target = data.to(self.dev),target.to(self.dev)
                 self.optimizer.zero_grad()
                 output = self.forward(data)
-                loss = (loss_fn(output, target) + 50.*self.LT).to(self.dev)
+                loss = (loss_fn(output, target) + self.LT).to(self.dev)
                 loss.backward()
                 self.optimizer.step()
             if (epoch+1)%10 == 0:
                 print('epoch/epochs: '+str(epoch+1)+'/'+str(n_epochs))
                 print('accuracy: ', round((torch.argmax(output,dim=1) == target).sum().item()/len(target)*100.,5), '%')
+                #self.show_tensor_images(self.cT3)
+                #self.show_tensor_images(data)
                 print('------------------------------')
         if save:
             torch.save(self.state_dict(), self.path)
